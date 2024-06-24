@@ -43,6 +43,56 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
+// Handle login form submission
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        // Find the user by username
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid username or password.' });
+        }
+
+        // Compare the password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid username or password.' });
+        }
+
+        // If the username and password match, return success and the user ID
+        res.status(200).json({ message: 'Login successful.', userId: user._id });
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).json({ message: 'Failed to log in. Please try again later.' });
+    }
+});
+
+// Endpoint to return all recipes
+app.get('/api/recipes', async (req, res) => {
+    const options = {
+        method: 'GET',
+        url: 'https://chinese-food-db.p.rapidapi.com/',
+        headers: {
+            'x-rapidapi-key': 'cf9e87eb01msha39c88fb9fc5eefp11c45bjsn474218691ddf',
+            'x-rapidapi-host': 'chinese-food-db.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch recipes' });
+    }
+});
+
+// Serve register.html page
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
 // Handle user registration
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
