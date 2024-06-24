@@ -1,0 +1,144 @@
+/* Reset some default styles */
+body, h1, input, button, table {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+}
+
+.navbar h1 {
+    color: #00FFAB;
+    margin: 0;
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.navbar button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #121212;
+    background-color: #00FFAB;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.navbar button:hover {
+    background-color: #00e69a;
+    transform: scale(1.05);
+}
+
+h1 {
+    text-align: center;
+    color: #00FFAB;
+    margin-bottom: 20px;
+}
+
+#search-input, #reset-button, .delete-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-family: 'Roboto', sans-serif;
+}
+
+#search-input {
+    width: 300px;
+    border-radius: 5px;
+    padding-left: 10px;
+    color: #121212;
+}
+
+#reset-button, .delete-button {
+    background-color: #00FFAB;
+    color: #121212;
+    border-radius: 5px;
+}
+
+#reset-button:hover, .delete-button:hover {
+    background-color: #00e69a;
+    transform: scale(1.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+    border: 1px solid #00FFAB;
+}
+
+table thead {
+    background-color: #00FFAB;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #00FFAB;
+    color: #e0e0e0; 
+}
+
+table th {
+    background-color: #00FFAB;
+    color: #121212;
+}
+
+table tr:nth-child(even) {
+    background-color: #1e1e1e;
+}
+
+table tr:hover {
+    background-color: #333333;
+}
+
+img {
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #00FFAB;
+    border-radius: 5px;
+}
+
+input, button {
+    font-family: 'Roboto', sans-serif;
+}
+
+#back-button {
+    color: #121212;
+    background-color: #00FFAB;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#back-button:hover {
+    background-color: #00e69a;
+    transform: scale(1.05);
+}
