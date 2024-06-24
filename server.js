@@ -38,6 +38,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// Serve register.html page
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
 
 // Handle login form submission
 app.post('/login', async (req, res) => {
@@ -82,6 +86,132 @@ app.get('/api/recipes', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Failed to fetch recipes' });
     }
+});
+
+// Serve register.html page
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+// Handle user registration
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        // Check if username already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the saltRounds
+
+        // Create a new user in the database
+        const newUser = new User({
+            username,
+            password: hashedPassword
+        });
+
+        // Save the user to the database
+        await newUser.save();
+
+        res.status(200).json({ message: 'User registered successfully.' });
+    } catch (error) {
+        console.error('Error registering user:', error);
+        res.status(500).json({ message: 'Failed to register user. Please try again later.' });
+    }
+});
+
+
+// Endpoint to fetch user history based on userId
+app.get('/api/history/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        // Validate userId
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID.' });
+        }
+
+        const userHistory = await UserHistory.find({ userId: new ObjectId(userId) }).sort({ clickedAt: -1 });
+        res.json(userHistory);
+    } catch (error) {
+        console.error('Error fetching history:', error);
+        res.status(500).json({ message: 'Failed to fetch history. Please try again later.' });
+    }
+});
+
+// Endpoint to delete a history entry
+app.delete('/api/history/:historyId', async (req, res) => {
+    const { historyId } = req.params;
+
+    try {
+        // Validate historyId
+        if (!ObjectId.isValid(historyId)) {
+            return res.status(400).json({ message: 'Invalid history ID.' });
+        }
+
+        // Delete the history entry from the database
+        await UserHistory.deleteOne({ _id: new ObjectId(historyId) });
+
+        res.status(200).json({ message: 'History entry deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting history entry:', error);
+        res.status(500).json({ message: 'Failed to delete history entry. Please try again later.' });
+    }
+});
+
+// Endpoint to fetch a specific recipe by ID
+app.get('/api/recipes/:id', async (req, res) => {
+    const recipeId = req.params.id;
+    const options = {
+        method: 'GET',
+        url: `https://chinese-food-db.p.rapidapi.com/${recipeId}`,
+        headers: {
+            'x-rapidapi-key': 'cf9e87eb01msha39c88fb9fc5eefp11c45bjsn474218691ddf',
+            'x-rapidapi-host': 'chinese-food-db.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch recipe details' });
+    }
+});
+
+// Endpoint to save user history
+app.post('/api/saveHistory', async (req, res) => {
+    const { userId, recipeId, title, difficulty, image } = req.body;
+
+    try {
+        // Validate userId
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID.' });
+        }
+
+        const historyEntry = new UserHistory({
+            userId: new ObjectId(userId), // Correctly use 'new' with ObjectId
+            recipeId,
+            title,
+            difficulty,
+            image
+        });
+
+        await historyEntry.save();
+        res.status(201).json({ message: 'History saved successfully.' });
+    } catch (error) {
+        console.error('Error saving history:', error);
+        res.status(500).json({ message: 'Failed to save history. Please try again later.' });
+    }
+});
+
+// Endpoint to return the recipe detail page
+app.get('/recipeDetail', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'recipeDetail.html'));
 });
 
 app.listen(port, () => {
